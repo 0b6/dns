@@ -1,0 +1,42 @@
+name: Build and Push sniproxy and dnsmasq to GHCR
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sniproxy/**'
+      - 'dnsmasq/**'
+      - '.github/workflows/docker-ghcr.yml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Log in to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # Build and Push sniproxy Docker image
+    - name: Build and Push sniproxy Docker image
+      run: |
+        cp ./proxy-domains.txt ./sniproxy
+        docker build -t ghcr.io/${{ github.repository }}/sniproxy:latest ./sniproxy
+        docker push ghcr.io/${{ github.repository }}/sniproxy:latest
+
+    # Build and Push dnsmasq Docker image
+    - name: Build and Push dnsmasq Docker image
+      run: |
+        cp ./proxy-domains.txt ./dnsmasq
+        docker build -t ghcr.io/${{ github.repository }}/dnsmasq:latest ./dnsmasq
+        docker push ghcr.io/${{ github.repository }}/dnsmasq:latest
