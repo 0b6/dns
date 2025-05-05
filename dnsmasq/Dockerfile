@@ -18,7 +18,7 @@ RUN chmod +x /start.sh
 # 设置默认的公共 IP（可以通过环境变量覆盖）
 ENV PUBLIC_IP=192.168.1.1
 
-COPY dnsmasq.conf /etc/dnsmasq.conf:ro
+COPY dnsmasq.conf /etc/dnsmasq.conf
 
 # 设置容器的启动命令为执行脚本
 ENTRYPOINT ["/start.sh"]
